@@ -33,8 +33,8 @@ addpath(genpath('fibchan'))
 addpath(genpath('util'))
 
 if nargin == 0, smoothing = 1; end
-% H = [6,7,6,5,5]; % num of layers for each main branch
-H = [4,4,4];
+H = [5,6,7,6,5]; % num of layers for each main branch
+% H = [4,4,4];
 T = FibTree(H(end));
 m = numel(H);
 th0 = pi/m;
@@ -109,7 +109,7 @@ ppf{end+1} = @(t) r*exp(1i*t) + mobius(0,a,R);
 if v, Z = ppf{end}(t);  fill(real(Z),imag(Z),c); end
 
 % external boundary
-r = max(abs(C(1,:)+1i*C(2,:)))*1.03;
+r = max(abs(C(1,:)+1i*C(2,:)))*1.05;
 ppf{end+1} = @(t) r*exp(1i*t);
 if v
     Z = ppf{end}(t); fillout(real(Z),imag(Z),[-1,1,-1,1]*r*1.1,c); 
