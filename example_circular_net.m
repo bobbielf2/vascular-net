@@ -1,4 +1,4 @@
-function [C, pp, ppf] = example_circular_net(smoothing)
+function [C, pp, ppf] = example_circular_net(smoothing,v)
 %% generate a example (hydrodynamical) channel in a circular domain based on
 % the topology of a "Fibonacci tree" (a fractal tree).
 % Input:
@@ -6,7 +6,7 @@ function [C, pp, ppf] = example_circular_net(smoothing)
 %                   0 = no smoothing, 
 %                   1 = smoothed periodic cubic spline 
 %                   2 = smoothed via partition of unity (test)
-H = [6,7,6,5,5]; % num of layers for each main branch
+%   v       toggle for plots
 % Output:
 %   C       vertices of polygons, C(1,:) and C(2,:) are x- and y-coordinates,
 %           different polygons are separated by NaN's
@@ -19,12 +19,16 @@ H = [6,7,6,5,5]; % num of layers for each main branch
 % Requires: FibTree.m, tree2sectChannel.m, fillout.m, (spcsp.m if smoothing)
 % Bowei Wu, 10-15-2018, add piecewise polynomial output 11-2
 
+if nargin < 2, v = 1; end % toggle for plots
+
 addpath(genpath('fibchan'))
 addpath(genpath('util'))
 
 if nargin == 0, smoothing = 1; end
+H = [5,6,7,6,5]; % num of layers for each main branch
+% H = [4,4,4];
 T = FibTree(H(end));
-m = 5;
+m = numel(H);
 th0 = pi/m;
 C = tree2sectChannel(T,th0-0.01); %plot(C(1,:),C(2,:),'-',LW,1.2,MS,2); hold on
 for i = 1:m-1
@@ -51,8 +55,11 @@ Z = mobius(Z,a,R);
 C = [real(Z);imag(Z)];
 
 % plot the channel
-figure
-c = [1,1,1]/2; % color
+if v
+    figure
+    c = [1,1,1]/2; % color
+    t = linspace(0,2*pi,1000); 
+end 
 ind = find(isnan(C(1,:)));
 pp = cell(numel(ind)-1,1);
 ppf = cell(numel(ind)-1,1);
@@ -62,18 +69,10 @@ for i = 1:numel(ind)-1
         z = interp1(z, 1:.5:length(z)); % include midpoints of polygon edges, make interpolant closer to polygon.
         n = length(z);
         pp{i} = spcsp(1:n,z,0.98);
-        t = linspace(0,2*pi,1000);
         ppf{i} = @(t) ppfun(pp{i},t);
-        zz = ppf{i}(t);
-        x = real(zz);
-        y = imag(zz);
     elseif smoothing == 2
         z = C(:,ind(i)+1:ind(i+1)-2); z = z(1,:)+1i*z(2,:);
-        t = linspace(0,2*pi,1000);
         ppf{i} = @(t) smooth_poly(z,t);
-        zz = ppf{i}(t);
-        x = real(zz);
-        y = imag(zz);
     else
         z = C(:,ind(i)+1:ind(i+1)-1); z = z(1,:)+1i*z(2,:);
         n = length(z)-1;
@@ -85,29 +84,24 @@ for i = 1:numel(ind)-1
         end
         pp{i} = mkpp(breaks,coefs);
         ppf{i} = @(t) ppfun(pp{i},t);
-        t = linspace(0,2*pi,1000);
-        zz = ppf{i}(t);
-        x = real(zz);
-        y = imag(zz);
     end
-    fill(x,y,c)
-    hold on
+    if v
+        zz = ppf{i}(t); x = real(zz); y = imag(zz); fill(x,y,c); hold on
+    end
 end
 
 % internal (source) boundary
 r = 0.12;
-t = linspace(0,2*pi,200);
 ppf{end+1} = @(t) r*exp(1i*t) + mobius(0,a,R);
-Z = ppf{end}(t);
-fill(real(Z),imag(Z),c)
+if v, Z = ppf{end}(t);  fill(real(Z),imag(Z),c); end
 
 % external boundary
-r = max(abs(C(1,:)+1i*C(2,:)))*1.03;
+r = max(abs(C(1,:)+1i*C(2,:)))*1.05;
 ppf{end+1} = @(t) r*exp(1i*t);
-Z = ppf{end}(t);
-fillout(real(Z),imag(Z),[-1,1,-1,1]*r*1.1,c);
+if v
+    Z = ppf{end}(t); fillout(real(Z),imag(Z),[-1,1,-1,1]*r*1.1,c); 
+    plot(real(Z),imag(Z),'k')
+    hold off, axis equal, axis([-3,3,-3,3])
+    axis off; %xticklabels(''); yticklabels('')
+end
 
-
-hold off
-axis equal
-axis([-3,3,-3,3])

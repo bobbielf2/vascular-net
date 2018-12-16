@@ -27,7 +27,7 @@ if ifFlip, C(1,:) = 1 - C(1,:); C = fliplr(C); end % mirror reflection of the ch
 
 % transform into a right-hand pointing tree bounded by [0 1, -th, th]
 x = 1-C(2,:);
-y = C(1,:);
+y = -C(1,:);
 x = (x - min(x))/(max(x)-min(x));
 y = 2*th*(y - min(y))/(max(y)-min(y)) - th;
 

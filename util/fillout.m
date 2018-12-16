@@ -71,7 +71,7 @@ y=[y(i:end)' y(1:i-1)' y(i)];
 x=[xi   xi xe xe xi xi   x(1) x];
 y=[y(1) ye ye yi yi y(1) y(1) y];
 h=fill(x,y,varargin{:});
-%set(h,'edgecolor','none');
+set(h,'edgecolor','none');
 function [x,xc] = var_border(M)
 %VAR_BORDER   Get border of 2D array
 %

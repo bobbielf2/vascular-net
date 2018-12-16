@@ -22,10 +22,10 @@ xs = (b-a)*x.^.5+a;
 if ifRnd
     % wave = @(x) 0.1.*sin(6*pi*x.^1.2);
     wave = @(x,y) 0.02*randfun(x.^1.1+0.05*nthroot(y/pi*3,3)+.1,5);
-    z = exp(xs + 1i*(y + wave(x,y)) + 1i*th);
+    z = exp(xs + 1i*(y + wave(x,y)) - 1i*th);
     %z = exp(xs + wave(x*.04,y*.04)*2 + 1i*(y + wave(x,y)) + 1i*th);
 else
-    z = exp(xs + 1i*y + 1i*th);
+    z = exp(xs + 1i*y - 1i*th);
 end
 xout = real(z);
 yout = imag(z);
