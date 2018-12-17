@@ -19,14 +19,13 @@ function [C, pp, ppf] = example_circular_net(smoothing,v)
 % Requires: FibTree.m, tree2sectChannel.m, fillout.m, (spcsp.m if smoothing)
 % Bowei Wu, 10-15-2018, add piecewise polynomial output 11-2
 
-if nargin < 2, v = 1; end % toggle for plots
+if nargin < 2, v = 0; end % toggle for plots
 
-addpath(genpath('fibchan'))
-addpath(genpath('util'))
+setup_vasnet();
 
 if nargin == 0, smoothing = 1; end
-H = [5,6,7,6,5]; % num of layers for each main branch
-% H = [4,4,4];
+% H = [5,6,7,6,5]; % num of layers for each main branch
+H = [3,3,3];
 T = FibTree(H(end));
 m = numel(H);
 th0 = pi/m;
@@ -68,7 +67,7 @@ for i = 1:numel(ind)-1
         z = C(:,ind(i)+1:ind(i+1)-1); z = z(1,:)+1i*z(2,:);
         z = interp1(z, 1:.5:length(z)); % include midpoints of polygon edges, make interpolant closer to polygon.
         n = length(z);
-        pp{i} = spcsp(1:n,z,0.98);
+        pp{i} = spcsp(1:n,z,0.90);
         ppf{i} = @(t) ppfun(pp{i},t);
     elseif smoothing == 2
         z = C(:,ind(i)+1:ind(i+1)-2); z = z(1,:)+1i*z(2,:);
