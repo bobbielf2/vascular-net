@@ -6,6 +6,7 @@ function [C, pp, ppf] = example_circular_net(smoothing,v)
 %                   0 = no smoothing, 
 %                   1 = smoothed periodic cubic spline 
 %                   2 = smoothed via partition of unity (test)
+%                   3 = NURBS/B-splines based smoothing
 %   v       toggle for plots
 % Output:
 %   C       vertices of polygons, C(1,:) and C(2,:) are x- and y-coordinates,
@@ -23,7 +24,7 @@ if nargin < 2, v = 0; end % toggle for plots
 
 setup_vasnet();
 
-if nargin == 0, smoothing = 1; end
+if nargin == 0, smoothing = 3; end
 H = [5,6,7,6,5]; % num of layers for each main branch
 % H = [3,3,3];
 T = FibTree(H(end));
