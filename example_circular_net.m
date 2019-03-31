@@ -27,14 +27,6 @@ setup_vasnet();
 if nargin == 0, smoothing = 3; end
 H = [5,6,7,6,5]; % num of layers for each main branch
 % H = [3,3,3];
-if nargin < 2, v = 1; end % toggle for plots
-
-addpath(genpath('fibchan'))
-addpath(genpath('util'))
-
-if nargin == 0, smoothing = 1; end
-H = [5,6,7,6,5]; % num of layers for each main branch
-% H = [4,4,4];
 T = FibTree(H(end));
 m = numel(H);
 th0 = pi/m;
