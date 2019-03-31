@@ -13,7 +13,7 @@ function [s, W] = make_quadr_net(tol,smoothing,v)
 
 
 if nargin < 3, v = 0; end % toggle for plots
-if nargin < 2, smoothing = 1; end
+if nargin < 2, smoothing = 3; end
 if nargin < 1 || isempty(tol), tol = 1e-12; end
 [~,pp,ppf] = example_circular_net(smoothing,v);
 
