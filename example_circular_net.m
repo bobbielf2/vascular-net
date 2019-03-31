@@ -24,8 +24,8 @@ if nargin < 2, v = 0; end % toggle for plots
 setup_vasnet();
 
 if nargin == 0, smoothing = 1; end
-% H = [5,6,7,6,5]; % num of layers for each main branch
-H = [3,3,3];
+H = [5,6,7,6,5]; % num of layers for each main branch
+% H = [3,3,3];
 T = FibTree(H(end));
 m = numel(H);
 th0 = pi/m;
@@ -63,15 +63,20 @@ ind = find(isnan(C(1,:)));
 pp = cell(numel(ind)-1,1);
 ppf = cell(numel(ind)-1,1);
 for i = 1:numel(ind)-1
-    if smoothing == 1
+    if smoothing == 1 % smoothed cubic splines
         z = C(:,ind(i)+1:ind(i+1)-1); z = z(1,:)+1i*z(2,:);
         z = interp1(z, 1:.5:length(z)); % include midpoints of polygon edges, make interpolant closer to polygon.
         n = length(z);
         pp{i} = spcsp(1:n,z,0.90);
         ppf{i} = @(t) ppfun(pp{i},t);
-    elseif smoothing == 2
+    elseif smoothing == 2 % partition of unity smoothing
         z = C(:,ind(i)+1:ind(i+1)-2); z = z(1,:)+1i*z(2,:);
         ppf{i} = @(t) smooth_poly(z,t);
+    elseif smoothing == 3 % NURBS smoothing
+        z = C(:,ind(i)+1:ind(i+1)-2);
+        bn = 6;  % order of B-spline (polynomial degree = bn - 1)
+        [bt, bP, bw] = polygon_ctrlPts(z, bn);
+        ppf{i} = @(t) bsplinefun(bn,bt,bP,bw,t);
     else
         z = C(:,ind(i)+1:ind(i+1)-1); z = z(1,:)+1i*z(2,:);
         n = length(z)-1;
