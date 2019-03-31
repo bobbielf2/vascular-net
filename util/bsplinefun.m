@@ -14,3 +14,4 @@ else
     z = bspline_deboor(n,t,P,u/(2*pi)); % unweighted (B-splines)
 end
 z = z(1,:) + 1i*z(2,:);
+z = reshape(z,size(u));
